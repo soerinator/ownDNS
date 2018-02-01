@@ -35,7 +35,7 @@ Install/Use:
 			- save and close crontab
 		  		-> ownDNS_manager is started avery 30 minutes now
 		 
-		2.3) make ownDNS_manager.py executable by enering follwing command
+		2.4) make ownDNS_manager.py executable by enering follwing command
 			chmos +x ownDNS_manager.py
 	3) start test by entering test commands which can be found by entering following on CLI
 		./ownDNS_manager.py --help
@@ -64,7 +64,7 @@ import os
 
 
 class ownDNS_manager:
-	
+
 	#MAIL - can be used to get notifications per mail in case 
 	#	* IP changed
 	DEF_MAIL_ENABLED		= False					#set True to enable mail, Flase to disable mail
@@ -87,7 +87,7 @@ class ownDNS_manager:
 	DEF_DBOX_UPLOADER		= '/ownDNS/ownDNS_manager_develop/ownDNS_manager/ownDNS/Dropbox-Uploader/dropbox_uploader.sh'		#upload script				
 	
 	DEF_DBOX_HTML_LNK		= 'https://www.dropbox.com/[your_directory]/find_home.html?dl=1&pv=1'	#link to uploaded html which includes the ip
-	
+
 	
 
 	def send_mail_ip_changed(self,old_ip,new_ip,debug):
@@ -545,7 +545,7 @@ if __name__ == "__main__":
 
 	elif(args.test_getActualLoggedIP):
 		#show last loged IP
-		act_logged_ip = odnsm.get_old_ip()
+		act_logged_ip = odnsm.get_old_ip(args.debug)
 		print("\nActual logged IP is: "+act_logged_ip+"\n")
 		
 	elif(args.test_getTimeStamp):
