@@ -1,5 +1,5 @@
-# ownDNS_manager
-Manages the upload of IPs inside a html page to a Dropbox directory if it has been changed. This helps you to find your home server on the internet.
+# ownDNS
+ownDNS shall be a service which uploads the own IP wrapped in an html page to a Dropbox directory if it has been changed. This helps you to find your home server on the internet.
 
 ## Requirements
 
