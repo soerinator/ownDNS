@@ -1,5 +1,5 @@
 # ownDNS
-ownDNS shall be a service which uploads the own IP wrapped in an html page to a Dropbox directory if it has been changed. This helps you to find your home server on the internet.
+ownDNS shall be a private service which enables you to find your own server without registering a domain. It uploads the own IP, wrapped in an html page, to a 24/7 accessible cloud storage like Dropbox. This enables you to find your home server at any time, also if the IP has been changed. It is like an (dyn)DNS service, but with own and free available recources. 
 
 ## Requirements
 
