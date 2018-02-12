@@ -1,4 +1,6 @@
 # ownDNS
+A private alternative solution to usually used DNS services like DynDNS.
+
 ownDNS shall be a private service which enables you to find your own server without registering a domain. It uploads the own IP, wrapped in an html page, to a 24/7 accessible cloud storage like Dropbox. This enables you to find your home server at any time, also if the IP has been changed. It is like an (dyn)DNS service, but with own and free available recources. 
 
 ## Requirements
