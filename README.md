@@ -52,6 +52,4 @@ Follwoing is required to get the ownDNS functional:
           ./ownDNS_manager.py --help
 
 ## Hint
-
-Ensure that only you (the Dropbox-uploader) can write to your Dropbox folde on which the html file with your IP 
-will be stored!
+Ensure that only you (the Dropbox-uploader) can write to your Dropbox folder on which the html file with your IP will be stored! 
