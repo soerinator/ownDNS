@@ -84,7 +84,7 @@ class ownDNS_manager:
 	#DROPBOX UPLOAD PARAMETERS
 	DEF_DBOX_CMD			= 'upload'				#command for upload (download is also possible, but not used here)
 	DEF_DBOX_FOLDER			= 'Public'				#folder on which the file will be uploaded
-	DEF_DBOX_UPLOADER		= '/ownDNS/ownDNS_manager_develop/ownDNS_manager/ownDNS/Dropbox-Uploader/dropbox_uploader.sh'		#upload script				
+	DEF_DBOX_UPLOADER		= '/ownDNS/Dropbox-Uploader/dropbox_uploader.sh'		#upload script				
 	
 	DEF_DBOX_HTML_LNK		= 'https://www.dropbox.com/[your_directory]/find_home.html?dl=1&pv=1'	#link to uploaded html which includes the ip
 
