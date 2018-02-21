@@ -1,4 +1,6 @@
 # ownDNS
+A private alternative solution to usually used DNS services like DynDNS.
+
 ownDNS shall be a private service which enables you to find your own server without registering a domain. It uploads the own IP, wrapped in an html page, to a 24/7 accessible cloud storage like Dropbox. This enables you to find your home server at any time, also if the IP has been changed. It is like an (dyn)DNS service, but with own and free available recources. 
 
 ## Requirements
@@ -50,6 +52,4 @@ Follwoing is required to get the ownDNS functional:
           ./ownDNS_manager.py --help
 
 ## Hint
-
-Ensure that only you (the Dropbox-uploader) can write to your Dropbox folde on which the html file with your IP 
-will be stored!
+Ensure that only you (the Dropbox-uploader) can write to your Dropbox folder on which the html file with your IP will be stored! 
