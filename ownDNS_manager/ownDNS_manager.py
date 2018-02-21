@@ -64,7 +64,7 @@ import os
 
 
 class ownDNS_manager:
-
+	
 	#MAIL - can be used to get notifications per mail in case 
 	#	* IP changed
 	DEF_MAIL_ENABLED		= False					#set True to enable mail, Flase to disable mail
@@ -523,7 +523,7 @@ if __name__ == "__main__":
 	parser.add_argument("--test_getTimeStamp","-tgts", help="get and show time stamp",action='store_true') 
 	parser.add_argument("--test_forceIPchange","-tfipc", help="force ip change as test to check manager and upload",action='store_true') 
 	parser.add_argument("--test_forceUpload","-tfup", help="force html upload",action='store_true') 
-	parser.add_argument("--debug","-d", help="show addition debug messages",action='store_true') 
+	parser.add_argument("--debug","-d", help="show additional debug messages",action='store_true') 
 	parser.add_argument("--test_sendIPChangeInfo","-tsipci", help="send test mail about ip change",action='store_true') 
 		
 		
