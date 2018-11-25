@@ -52,6 +52,7 @@ Version:
 
 """
 
+
 import argparse
 
 import time
@@ -61,10 +62,12 @@ import urllib2
 from subprocess import PIPE, Popen
 
 import os
+import socket
 
 
 class ownDNS_manager:
-	
+
+
 	#MAIL - can be used to get notifications per mail in case 
 	#	* IP changed
 	DEF_MAIL_ENABLED		= False					#set True to enable mail, Flase to disable mail
@@ -91,7 +94,7 @@ class ownDNS_manager:
 	
 
 	def send_mail_ip_changed(self,old_ip,new_ip,debug):
-		"""sent mail by using system MTA (e.g. postfix)
+		"""sent mail to inform abaout IP change by using system MTA (e.g. postfix)
 
 		Args:
 			ild_ip: old ip
@@ -111,7 +114,55 @@ class ownDNS_manager:
 
 
 		msg = "Hi,\n\n    the IP has been changed from: "+old_ip+" to: "+new_ip+".\n\nBest regards,\nYour loving Home"
-		subject = "IP CHANGE INFO"
+		subject = "ownDNS: INFO"
+		
+		self.send_mail(msg,subject,debug)
+
+
+	def send_mail_ip_check_error(self,old_ip,debug):
+		"""sent mail to inform about ip check error by using system MTA (e.g. postfix)
+
+		Args:
+			debug: enable additional debug info
+
+		Returns:
+			nothing
+
+		ToDo:
+			nothing		
+		
+		"""
+
+		if(debug):
+			print("Sending mail to: "+self.DEF_MAIL_RECEIVER)
+
+
+		msg = "Hi,\n\n    there was an error during external check of current own ip. Current IP "+old_ip+" has not been changed.\n\nBest regards,\nYour loving Home"
+		subject = "ownDNS: ERROR"
+		
+		self.send_mail(msg,subject,debug)
+		
+		
+	def send_mail_upload_error(self,old_ip,debug):
+		"""sent mail to inform about upload error by using system MTA (e.g. postfix)
+
+		Args:
+			debug: enable additional debug info
+
+		Returns:
+			nothing
+
+		ToDo:
+			nothing		
+		
+		"""
+
+		if(debug):
+			print("Sending mail to: "+self.DEF_MAIL_RECEIVER)
+
+
+		msg = "Hi,\n\n    there was an error during upload of HTML with new IP. \n\nBest regards,\nYour loving Home"
+		subject = "ownDNS: ERROR"
 		
 		self.send_mail(msg,subject,debug)
 		
@@ -359,6 +410,28 @@ class ownDNS_manager:
 		text_file.write(ip)
 		text_file.close()
 		
+	
+	
+	def check_ip(self,ip):
+		"""check if we have an IP or not
+
+		Args:
+			ip: ip
+					
+		Returns:
+			true in case it is an IP or false in case it is no valid IP 
+		
+		ToDo:
+			nothing
+		
+		"""
+	
+		try:
+			socket.inet_aton(ip)
+			return True
+		except:
+			return False
+	
 		
 	def get_actual_ip(self,service):
 		"""get actual ip by external service
@@ -385,8 +458,11 @@ class ownDNS_manager:
 		act_ip  = act_ip.replace('\n', '').replace('\r', '')
 
 		
+		#check ip
+		chkip_res = self.check_ip(act_ip)
+		
 		#do another try if it failed
-		if(act_ip==""):
+		if(chkip_res):
 			if(service=="dig"):
 				act_ip = Popen(["dig", "+short", "myip.opendns.com", "@resolver1.opendns.com"], stdout=PIPE).communicate()[0]
 			else:
@@ -399,7 +475,7 @@ class ownDNS_manager:
 		
 
 	def upload_error_chk(self):
-		"""check for upload errors
+		"""check upload logfile for upload errors
 
 		Args:
 			none
@@ -451,10 +527,16 @@ class ownDNS_manager:
 			nothing
 		"""
 		
+		#get current IP
 		act_ip = self.get_actual_ip("curl")
+		#get saved IP
 		old_ip = self.get_old_ip(debug)
 
 
+		#check current IP
+		act_ip_is_ip = self.check_ip(act_ip)
+		
+		
 		if(debug):
 			print("\nactual IP is:"+act_ip)
 			print("lastIP was  :"+old_ip+"\n")
@@ -474,6 +556,7 @@ class ownDNS_manager:
 		if(test_forceUpload):
 			print("\n   -> Force Upload\n")		
 
+
 		if ((old_ip == act_ip) | (act_ip=="")) & (not test_forceUpload):
 			if(debug):
 				print "     -> no IP change!\n"
@@ -482,32 +565,48 @@ class ownDNS_manager:
 			#do nothing
 			a=1
 		else:
-			if(debug):
-				print "     -> IP changed!\n"
-			        print self.get_timestamp()
+
+			if(act_ip_is_ip):
+
+				if(debug):
+					print "     -> IP is OK and has been changed!\n"
+			        	print self.get_timestamp()
 			
 			
-			#manage IP change 
+				#manage IP change 
 			
-			#send mailinfo
-			if(self.DEF_MAIL_ENABLED==True):
-				self.send_mail_ip_changed(old_ip,act_ip,debug)
+				#send mailinfo
+				if(self.DEF_MAIL_ENABLED==True):
+					self.send_mail_ip_changed(old_ip,act_ip,debug)
+				
+				#upload new IP
+				self.save_new_ip(act_ip,debug)
+				self.write_html(act_ip,debug)
+				self.dropbox_html_upload(debug)	
+				self.log_ip_change(old_ip, act_ip)
+				a=2
+			else:
+				#IP is incorrect			
+				if(debug):
+					print "IP "++" is NOT OK! No action done!\n"
+
+
+				#send mailinfo
+				if(self.DEF_MAIL_ENABLED==True):
+					self.send_mail_ip_check_error(old_ip,debug)
+
 			
-			#upload new IP
-			self.save_new_ip(act_ip,debug)
-			self.write_html(act_ip,debug)
-			self.dropbox_html_upload(debug)	
-			self.log_ip_change(old_ip, act_ip)
-			a=2
-		
 		
 		#check if upload was error-free
 		#if not, upload again
 		if self.upload_error_chk() == 1:
 			if(debug):
 				print("\nERROR on uploadd etected ... try to upload again ..... \n")
+				
+			#send mailinfo
+			if(self.DEF_MAIL_ENABLED==True):
+				self.send_mail_upload_error(old_ip,debug)
 			
-			upload_html()
 		
 	
 if __name__ == "__main__":
@@ -524,6 +623,7 @@ if __name__ == "__main__":
 	parser.add_argument("--test_forceIPchange","-tfipc", help="force ip change as test to check manager and upload",action='store_true') 
 	parser.add_argument("--test_forceUpload","-tfup", help="force html upload",action='store_true') 
 	parser.add_argument("--debug","-d", help="show additional debug messages",action='store_true') 
+	parser.add_argument("--chekip","-chkip", help="check given IP (e.g.: -chkip 129.23.212.23)") 
 	parser.add_argument("--test_sendIPChangeInfo","-tsipci", help="send test mail about ip change",action='store_true') 
 		
 		
@@ -552,6 +652,20 @@ if __name__ == "__main__":
 		#show last loged IP
 		ts = odnsm.get_timestamp()
 		print("\nTimeStamp is: "+ts+"\n")
+
+
+	elif(args.chekip):
+		#check ip
+		res = odnsm.check_ip(args.chekip)
+		
+		if(res):			
+			print("\nIP: "+args.chekip+" -> is OK!\n")
+		else:
+			print("\nIP: "+args.chekip+" -> is NOT OK!\n")
+					#get saved IP
+			old_ip = odnsm.get_old_ip(args.debug)
+			odnsm.send_mail_ip_check_error(old_ip,args.debug)		
+
 
 	elif(args.test_sendIPChangeInfo):
 		odnsm.send_mail_ip_changed("99.99.99.99","0.0.0.0",args.debug)
